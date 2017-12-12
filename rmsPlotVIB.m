@@ -5,7 +5,7 @@ dir.folderSource = 'D:\continuous_monitoring\data_hangzhouwan_beihangdao\';
 dir.matSave = 'D:\continuous_monitoring\analysis\matFiles\';
 dir.figSave = 'D:\continuous_monitoring\analysis\figures\';
 dateStartInput = '2014-01-01';
-dateEndInput = '2014-01-08';
+dateEndInput = '2016-12-31';
 
 nickName = {'VIB'};
 dimens = [180000 55]; % [number of points , number of channels]

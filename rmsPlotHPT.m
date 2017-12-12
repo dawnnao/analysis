@@ -7,8 +7,8 @@ dir.figSave = 'D:\continuous_monitoring\analysis\figures\';
 dateStartInput = '2014-01-01';
 dateEndInput = '2016-12-31';
 
-nickName = {'VIB'};
-dimens = [180000 55]; % [number of points , number of channels]
+nickName = {'HPT'};
+dimens = [36000 36]; % [number of points , number of channels]
 nBlocks = 6; % number of blocks for hour-data
 %% plots
 formatIn = 'yyyy-mm-dd';
@@ -43,7 +43,7 @@ for d = dateStart : dateEnd
             end
             
             fprintf('\nCalculating RMS...\n')
-            rmsBlocks = calcuRMSForVIB(dataTemp.data, nBlocks);
+            rmsBlocks = calcuRMSForHPT(dataTemp.data, nBlocks);
             rmsAll = cat(1, rmsAll, rmsBlocks);
             clear rmsBlocks
             
@@ -61,13 +61,13 @@ for d = dateStart : dateEnd
 end
 
 %% save data
-if ~exist(dir.folderSave, 'dir')
-    mkdir(dir.folderSave)
+if ~exist(dir.matSave, 'dir')
+    mkdir(dir.matSave)
 end
 
 formatOut = 'yyyy_mm_dd_HH_MM';
 dateSave = datestr(datetime('now'), formatOut);
-save(sprintf('%s/data_rms_VIB_%s.mat', dir.matSave, dateSave));
+save(sprintf('%s/data_rms_HPT_%s.mat', dir.matSave, dateSave));
 fprintf('\nData saved.\n')
 
 %% plot
@@ -93,7 +93,7 @@ for m = 1 : length(xDate)
     
 end
 
-dir.figFolder = sprintf('%s/figures_rms_VIB_%s/', dir.figSave, dateSave);
+dir.figFolder = sprintf('%s/figures_rms_HPT_%s/', dir.figSave, dateSave);
 if ~exist(dir.figFolder, 'dir')
     mkdir(dir.figFolder)
 end
@@ -111,7 +111,7 @@ for m = 1 : size(rmsAll, 2)
     
 %     xlabel = 'Date';
     ax.YLabel.String = 'RMS (gal)';
-    ax.Title.String = sprintf('VIB channel %02d', m);
+    ax.Title.String = sprintf('HPT channel %02d', m);
     
     set(gca, 'fontsize', 20);
     set(gca, 'fontname', 'Times New Roman', 'fontweight', 'bold');
@@ -129,12 +129,12 @@ for m = 1 : size(rmsAll, 2)
     ax.Position = [0.05 0.19 0.94 0.72];  % control ax's position in figure
     
     % save
-    saveas(gcf, sprintf('%s/rms_VIB_chan_%d.tif', dir.figFolder, m));
-    fprintf('\nrms VIB channel %d saved.\n', m);
+    saveas(gcf, sprintf('%s/rms_HPT_chan_%d.tif', dir.figFolder, m));
+    fprintf('\nrms HPT channel %d saved.\n', m);
     
 end
 
-run('rms_VIB_makeDocFile.m');
+run('rms_HPT_makeDocFile.m');
 
 
 

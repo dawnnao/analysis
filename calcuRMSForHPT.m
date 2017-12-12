@@ -1,9 +1,9 @@
-function  rmsBlocks = calcuRMSForDPM(data, n)
+function  rmsBlocks = calcuRMSForHPT(data, n)
 % Split data to n blocks and calculate RMS for each block. In each block,
 % RMS values are calculated by each column.
 
-data(abs(data) > 2000) = NaN; % clean outliers
-data(abs(data) < 100) = NaN; % clean outliers
+% data(abs(data) > 2000) = NaN; % clean outliers
+% data(abs(data) < 100) = NaN; % clean outliers
 
 
 rmsBlocks = [];

@@ -59,8 +59,8 @@ for d = dateStart : dateEnd
 end
 
 %% save data
-if ~exist(dir.folderSave, 'dir')
-    mkdir(dir.folderSave)
+if ~exist(dir.matSave, 'dir')
+    mkdir(dir.matSave)
 end
 
 formatOut = 'yyyy_mm_dd_HH_MM';
@@ -132,6 +132,8 @@ for m = 1 : size(rmsAll, 2)
 end
 
 run('rms_DPM_makeDocFile.m');
+
+close all
 
 
 
