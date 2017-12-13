@@ -5,28 +5,23 @@ dir.folderSource = 'D:\continuous_monitoring\data_hangzhouwan_beihangdao\';
 dir.matSave = 'D:\continuous_monitoring\analysis\matFiles\';
 dir.figSave = 'D:\continuous_monitoring\analysis\figures\';
 dateStartInput = '2014-01-01';
-dateEndInput = '2016-12-31';
+dateEndInput = '2014-02-28';
 
-nickName = {'DPM'};
-dimens = [36000 13]; % [number of points , number of channels]
-downSampRatio = 1000; % decrease sampling rate by interger factor
-endOfMonthSerial = [getSerialDateOfMonthEnd(2014, 1:12, 1),...
-                    getSerialDateOfMonthEnd(2015, 1:12, 1),...
-                    getSerialDateOfMonthEnd(2016, 1:12, 1)];
+nickName = {'VIB'};
+dimens = [180000 55]; % [number of points , number of channels]
+nBlocks = 6; % number of blocks for hour-data
+downSampRatio = 5; % decrease sampling rate by interger factor
+serialDate = [getSerialDateOfMonthEnd(2014, 1:12, 1),...
+              getSerialDateOfMonthEnd(2015, 1:12, 1),...
+              getSerialDateOfMonthEnd(2016, 1:12, 1)];
 
 %% plots
-% initialization
 formatIn = 'yyyy-mm-dd';
 dateStart = datenum(dateStartInput, formatIn);     % convert to serial number (count from year 0000)
 dateEnd   = datenum(dateEndInput, formatIn);
 dayTotal = dateEnd-dateStart+1;
 count = 1;
-countMonth = 1;
 boxDataAll = [];
-for f = 1 : dimens(2)
-    yLim{f} = [];
-end
-
 for d = dateStart : dateEnd
     string = datestr(d);
     
@@ -36,6 +31,7 @@ for d = dateStart : dateEnd
         dateSerial(count, 1) = datenum(dateVec(count,:));
         
         dir.dateFolderRead = sprintf('%d-%02d-%02d\\', dateVec(count,1), dateVec(count,2), dateVec(count,3));
+        
         % read file and plot
         if exist([dir.folderSource dir.dateFolderRead], 'dir')
             dir.fileRead = sprintf('%d-%02d-%02d %02d-%s.mat', ...
@@ -49,11 +45,8 @@ for d = dateStart : dateEnd
                 % fill with NaN
                 dataTemp.data = NaN(dimens);
             end
-            % clean and collect data
-            dataTemp.data = downsample(dataTemp.data, downSampRatio);
-            dataTemp.data = abs(dataTemp.data);
-            dataTemp.data(dataTemp.data > 2000) = NaN; % clean outliers
-            dataTemp.data(dataTemp.data < 100) = NaN;
+            % collect data
+            dataTemp.data = downsample(dataTemp.data, downSampRatio);            
             boxDataAll = cat(1, boxDataAll, dataTemp.data);
             clear dataTemp
         else
@@ -61,47 +54,27 @@ for d = dateStart : dateEnd
 %             % fill with NaN
 %             dataTemp = NaN(dimens);
         end
-        count = count + 1;
+        count = count + 1;        
     end
     
-    % boxplot per month
-    if  ismember(ceil(dateSerial(count-1, 1)), endOfMonthSerial)
+    if  ismember(dateSerial(count-1, 1), serialDate)
         % separate data column
         for f = 1 : dimens(2)
-            dataSplit{f}(:, countMonth) = boxDataAll(:, f);
-            dataSplit{f}(:, 1:countMonth-1) = NaN;
+            dataSplit{f}(:, count) = boxDataAll(:, f);
+            dataSplit{f}(:, 1:count-1) = NaN;
         end
         boxDataAll = [];
+        
         % plot each column
         for f = 1 : dimens(2)
             figure(f)
             boxplot(dataSplit{f});
-            
-            % axis control
-            yLimPrev{f} = yLim{f};
-            yLim{f} = get(gca, 'YLim');
-            yLimMix = [yLim{f} yLimPrev{f}];
-            yLim{f} = [min(yLimMix) max(yLimMix)];
-            set(gca, 'YLim', yLim{f});
-            
-            ax = gca;
-            ax.Title.String = sprintf('DPM channel %02d', f);
-            ax.YLabel.String = 'Displ. (mm)';
-            ax.Units = 'normalized';
-            ax.Position = [0.05 0.09 0.94 0.82];  % control ax's position in figure
-            set(gca, 'fontsize', 20);
-            set(gca, 'fontname', 'Times New Roman', 'fontweight', 'bold');
-            
-            fig = gcf;
-            fig.Units = 'pixels';
-            fig.Position = [20 50 2500 480];  % control figure's position
-            fig.Color = 'w';           
-            
             hold on
         end
-        dataSplit = [];
-        countMonth = countMonth + 1;
+        clear dataSplit
+        
     end
+    
     
 end
 
@@ -112,19 +85,8 @@ end
 
 formatOut = 'yyyy_mm_dd_HH_MM';
 dateSave = datestr(datetime('now'), formatOut);
-save(sprintf('%s/data_box_DPM_%s.mat', dir.matSave, dateSave));
+save(sprintf('%s/data_box_VIB_%s.mat', dir.matSave, dateSave));
 fprintf('\nData saved.\n')
-
-%% save figures
-dir.figFolder = sprintf('%s/figures_box_DPM_%s/', dir.figSave, dateSave);
-if ~exist(dir.figFolder, 'dir')
-    mkdir(dir.figFolder)
-end
-
-for m = 1 : dimens(2)
-    saveas(figure(m), sprintf('%s/box_DPM_chan_%d.tif', dir.figFolder, m));
-    fprintf('\nbox DPM channel %d saved.\n', m);
-end
 
 %% plot
 % make xlabel
@@ -148,7 +110,10 @@ for m = 1 : length(xDate)
     
 end
 
-
+dir.figFolder = sprintf('%s/figures_box_VIB_%s/', dir.figSave, dateSave);
+if ~exist(dir.figFolder, 'dir')
+    mkdir(dir.figFolder)
+end
 
 for m = 1 : size(boxDataAll, 2)
     figure(m)
@@ -163,7 +128,7 @@ for m = 1 : size(boxDataAll, 2)
     
 %     xlabel = 'Date';
 %     ax.YLabel.String = 'box';
-    ax.Title.String = sprintf('DPM channel %02d', m);
+    ax.Title.String = sprintf('VIB channel %02d', m);
     
     set(gca, 'fontsize', 20);
     set(gca, 'fontname', 'Times New Roman', 'fontweight', 'bold');
@@ -181,11 +146,12 @@ for m = 1 : size(boxDataAll, 2)
     ax.Position = [0.05 0.19 0.94 0.72];  % control ax's position in figure
     
     % save
-    
+    saveas(gcf, sprintf('%s/box_VIB_chan_%d.tif', dir.figFolder, m));
+    fprintf('\nbox VIB channel %d saved.\n', m);
     
 end
 
-run('box_DPM_makeDocFile.m');
+run('box_VIB_makeDocFile.m');
 
 
 

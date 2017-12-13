@@ -7,6 +7,7 @@ dateEndInput = '2014-01-05';
 
 nickName = {'VIB'};
 dimens = [180000 55]; % [number of points , number of channels]
+
 %% plots
 formatIn = 'yyyy-mm-dd';
 dateStart = datenum(dateStartInput, formatIn);     % convert to serial number (count from year 0000)
@@ -38,6 +39,12 @@ for d = dateStart : dateEnd
                 dataTemp = NaN(dimens);
             end
             
+            
+            
+            
+            
+            
+            
             % separate data column
             for f = 1 : dimens(2)
                 
@@ -53,6 +60,12 @@ for d = dateStart : dateEnd
                 hold on
             end
             clear dataSplit
+            
+            
+            
+            
+            
+            
             
             
         else

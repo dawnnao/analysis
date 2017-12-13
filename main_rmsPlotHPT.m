@@ -110,7 +110,7 @@ for m = 1 : size(rmsAll, 2)
     ax.TickLength = [0 0];
     
 %     xlabel = 'Date';
-    ax.YLabel.String = 'RMS (gal)';
+    ax.YLabel.String = 'Deflection (cm)';
     ax.Title.String = sprintf('HPT channel %02d', m);
     
     set(gca, 'fontsize', 20);
