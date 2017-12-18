@@ -1,6 +1,6 @@
 import mlreportgen.dom.*;
 
-dir.docFile = sprintf('%s/rms_HPT_%s', dir.figSave, dateSave); % set file path
+dir.docFile = sprintf('%s/freq_VIB_%s', dir.figSave, dateSave); % set file path
 reportType = 'docx';
 doc = Document(dir.docFile, reportType);
 open(doc);
@@ -89,10 +89,10 @@ tableObj{countTable} = Table();
 rowImg{2} = TableRow();
 rowCap{2} = TableRow();
 c = 1;
-for l = 1 : size(rmsAll, 2)
-    imgsize = size(imread(sprintf('%s/rms_HPT_chan_%d.tif', dir.figFolder, l))); % get image size
+for l = 1 : dimens(2)
+    imgsize = size(imread(sprintf('%s/freq_VIB_chan_%d.tif', dir.figFolder, l))); % get image size
     width = [num2str(1.15 * imgsize(2)/imgsize(1)) 'in'];
-    images{l} = Image(sprintf('%s/rms_HPT_chan_%d.tif', dir.figFolder, l)); % read images from folder
+    images{l} = Image(sprintf('%s/freq_VIB_chan_%d.tif', dir.figFolder, l)); % read images from folder
     images{l}.Height = '1.15in';
     images{l}.Width = width;
     append(rowImg{2}, TableEntry(images{l}));
@@ -113,7 +113,7 @@ for l = 1 : size(rmsAll, 2)
 %         append(tableObj{countTable},rowCap{2});
         rowImg{2} = TableRow();
 %         rowCap{2} = TableRow();
-    elseif l == size(rmsAll, 2)
+    elseif l == dimens(2)
         append(tableObj{countTable},rowImg{2});
 %         append(tableObj{countTable},rowCap{2});
     end
@@ -134,8 +134,6 @@ append(doc, tableObj{countTable});
 close(doc);
 
 fprintf('\nDocument generated.\n')
-
-% close all
 
 
 

@@ -18,6 +18,8 @@ visualizeFeatures*
 plotForPaper*
 clusterOverview*
 *.emf
+figures*
+hangzhouwan_beihangdao
 
 # Compiled source #
 ###################
@@ -61,3 +63,6 @@ plot/panorama/legend.png
 *.tif
 *.docx
 *.docx
+*.tif
+*.tif
+figures/figures_rms_VIB_2017_12_12_00_05/rms_VIB_chan_1.tif

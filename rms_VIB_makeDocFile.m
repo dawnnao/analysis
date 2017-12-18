@@ -89,7 +89,7 @@ tableObj{countTable} = Table();
 rowImg{2} = TableRow();
 rowCap{2} = TableRow();
 c = 1;
-for l = 1 : size(rmsAll, 2)
+for l = orderPlot
     imgsize = size(imread(sprintf('%s/rms_VIB_chan_%d.tif', dir.figFolder, l))); % get image size
     width = [num2str(1.15 * imgsize(2)/imgsize(1)) 'in'];
     images{l} = Image(sprintf('%s/rms_VIB_chan_%d.tif', dir.figFolder, l)); % read images from folder
@@ -113,7 +113,7 @@ for l = 1 : size(rmsAll, 2)
 %         append(tableObj{countTable},rowCap{2});
         rowImg{2} = TableRow();
 %         rowCap{2} = TableRow();
-    elseif l == size(rmsAll, 2)
+    elseif l == orderPlot(end)
         append(tableObj{countTable},rowImg{2});
 %         append(tableObj{countTable},rowCap{2});
     end
