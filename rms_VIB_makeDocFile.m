@@ -56,13 +56,10 @@ for n = cBlank+1 : cBlankNew
     append(doc, blankObj{n});
 end
 
-% dateObj = Paragraph(datetime('now','Format','yyyy-MM-dd'));
-% datestr(datetime('now'),'yyyy-MM-dd');
 dateObj = Paragraph(datestr(datetime('now'),'yyyy-mm-dd'));
 dateObj.Bold = false;
 dateObj.FontSize = '18';
 dateObj.HAlign = 'center';
-% append(dateObj, ['' datetime('now','Format','yyyy-MM-dd') '']);
 append(doc, dateObj);
 
 countFig = 0; % initialization for image count
@@ -84,55 +81,73 @@ append(doc, sect{countSect});
 
 % imageCap = labelName; % images captions (cell format)
 
-countTable = countTable + 1;
-tableObj{countTable} = Table();
-rowImg{2} = TableRow();
-rowCap{2} = TableRow();
-c = 1;
-for l = orderPlot
-    imgsize = size(imread(sprintf('%s/rms_VIB_chan_%d.tif', dir.figFolder, l))); % get image size
-    width = [num2str(1.15 * imgsize(2)/imgsize(1)) 'in'];
-    images{l} = Image(sprintf('%s/rms_VIB_chan_%d.tif', dir.figFolder, l)); % read images from folder
-    images{l}.Height = '1.15in';
-    images{l}.Width = width;
-    append(rowImg{2}, TableEntry(images{l}));
+for g = 1 : length(orderPlot)
     
-    if exist('countFig', 'var'), countFig = countFig + 1;
-    else countFig = 1; 
+    % make tile
+    hintObj = Paragraph(sprintf('group %d:', g));
+    hintObj.Bold = false;
+    hintObj.FontSize = '16';
+    hintObj.HAlign = 'left';
+    append(doc, hintObj);
+    
+    % insert blank
+    cBlank = 0; frag = 1;
+    cBlankNew = cBlank + frag;
+    for n = cBlank+1 : cBlankNew
+        blankObj{n} = Paragraph('');
+        append(doc, blankObj{n});
     end
     
-%     % make image captions
-%     imageCaps{l} = Paragraph(sprintf('Fig %d. %s', countFig, imageCap{l}));
-%     imageCaps{l}.Bold = false;
-%     % imageNetPerformCap.FontSize = '18';
-%     imageCaps{l}.HAlign = 'center';
-%     append(rowCap{2}, TableEntry(imageCaps{l}));
-    
-    if mod(c,1) == 0 % change here to customize column number of table
-        append(tableObj{countTable},rowImg{2});
-%         append(tableObj{countTable},rowCap{2});
-        rowImg{2} = TableRow();
-%         rowCap{2} = TableRow();
-    elseif l == orderPlot(end)
-        append(tableObj{countTable},rowImg{2});
-%         append(tableObj{countTable},rowCap{2});
+    countTable = countTable + 1;
+    tableObj{countTable} = Table();
+    rowImg = TableRow();
+    rowCap = TableRow();
+    c = 1;
+    for p = orderPlot{g}
+        imgsize = size(imread(sprintf('%s/rms_VIB_chan_%d.tif', dir.figFolder, p))); % get image size
+        width = [num2str(1.15 * imgsize(2)/imgsize(1)) 'in'];
+        images{p} = Image(sprintf('%s/rms_VIB_chan_%d.tif', dir.figFolder, p)); % read images from folder
+        images{p}.Height = '1.15in';
+        images{p}.Width = width;
+        append(rowImg, TableEntry(images{p}));
+
+        if exist('countFig', 'var'), countFig = countFig + 1;
+        else countFig = 1; 
+        end
+
+    %     % make image captions
+    %     imageCaps{l} = Paragraph(sprintf('Fig %d. %s', countFig, imageCap{l}));
+    %     imageCaps{l}.Bold = false;
+    %     % imageNetPerformCap.FontSize = '18';
+    %     imageCaps{l}.HAlign = 'center';
+    %     append(rowCap, TableEntry(imageCaps{l}));
+
+        if mod(c,1) == 0 % change here to customize column number of table
+            append(tableObj{countTable},rowImg);
+    %         append(tableObj{countTable},rowCap);
+            rowImg = TableRow();
+    %         rowCap = TableRow();
+    %   elseif l == orderPlot(end)
+    %       append(tableObj{countTable},rowImg);
+    %         append(tableObj{countTable},rowCap);
+        end
+        c = c + 1;
     end
-    c = c + 1;
+    tableObj{countTable}.HAlign = 'center';
+    append(doc, tableObj{countTable});
+    
+    % insert blank
+    cBlank = 0; frag = 4;
+    cBlankNew = cBlank + frag;
+    for n = cBlank+1 : cBlankNew
+        blankObj{n} = Paragraph('');
+        append(doc, blankObj{n});
+    end
 end
-tableObj{countTable}.HAlign = 'center';
-append(doc, tableObj{countTable});
 
 %% insert next section
-% countSect = countSect + 1;
-% sect{5} = DOCXPageLayout;
-% sect{5}.PageSize.Orientation = 'portrait';
-% sect{5}.SectionBreak = 'Next Page';
-% sect{5}.PageSize.Height = '8.27in';
-% sect{5}.PageSize.Width = '11.69in';
-% append(doc, sect{5});
-
 close(doc);
-
+rptview(doc.OutputPath);
 fprintf('\nDocument generated.\n')
 
 

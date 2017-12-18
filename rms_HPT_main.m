@@ -1,23 +1,25 @@
 clear;clc;close all
 
 %% settings
-dir.folderSource = 'D:\continuous_monitoring\data_hangzhouwan_beihangdao\';
-dir.matSave = 'D:\continuous_monitoring\analysis\matFiles\';
-dir.figSave = 'D:\continuous_monitoring\analysis\figures\';
+dir.folderSource = 'H:\jiashao\jiashao_2014\netmanagernj\';
+dir.matSave = 'D:\continuous_monitoring\analysis\jiashao\matFiles\';
+dir.figSave = 'D:\continuous_monitoring\analysis\jiashao\figures\';
 dateStartInput = '2014-01-01';
-dateEndInput = '2016-12-31';
+dateEndInput = '2014-12-31';
 
 nickName = {'HPT'};
-dimens = [36000 36]; % [number of points , number of channels]
+dimens = [3600 71]; % [number of points , number of channels]              % change here
 nBlocks = 6; % number of blocks for hour-data
-run('referPoint.m');
+run('referPoint.m');                                                       % change here
+
 %% plots
 formatIn = 'yyyy-mm-dd';
-dateStart = datenum(dateStartInput, formatIn);     % convert to serial number (count from year 0000)
+dateStart = datenum(dateStartInput, formatIn);
 dateEnd   = datenum(dateEndInput, formatIn);
 dayTotal = dateEnd-dateStart+1;
 count = 1;
 rmsAll = [];
+
 for d = dateStart : dateEnd
     string = datestr(d);
     
@@ -27,12 +29,10 @@ for d = dateStart : dateEnd
         dateSerial(count, 1) = datenum(dateVec(count,:));
         
         dir.dateFolderRead = sprintf('%d-%02d-%02d\\', dateVec(count,1), dateVec(count,2), dateVec(count,3));
-        
         % read file and plot
         if exist([dir.folderSource dir.dateFolderRead], 'dir')
             dir.fileRead = sprintf('%d-%02d-%02d %02d-%s.mat', ...
                     dateVec(count,1), dateVec(count,2), dateVec(count,3), dateVec(count,4), nickName{1});
-            
             % load file
             if exist([dir.folderSource dir.dateFolderRead dir.fileRead], 'file')
                 dataTemp = load([dir.folderSource dir.dateFolderRead dir.fileRead]);
@@ -50,15 +50,9 @@ for d = dateStart : dateEnd
             
         else
             fprintf('\n%s no such folder.\n', dir.dateFolderRead)
-%             % fill with NaN
-%             dataTemp = NaN(dimens);
         end
         count = count + 1;
-        
-        
-    end
-    
-    
+    end    
 end
 
 %% save data
@@ -71,82 +65,65 @@ dateSave = datestr(datetime('now'), formatOut);
 save(sprintf('%s/data_rms_HPT_%s.mat', dir.matSave, dateSave));
 fprintf('\nData saved.\n')
 
-%% clean again
-rmsSTD = nanstd(rmsAll);
-rmsMean = nanmean(rmsAll);
-for m = 1 : size(rmsAll, 2)
-    rmsAll((rmsAll(:,m) - rmsMean(m)) > 2*rmsSTD(m), m) = NaN;
-end
-
-%% plot
-% make xlabel
-xDate = [dateStart : dateEnd];
-xDate = upsample(xDate, 24*nBlocks);
-xLabel = cell(size(xDate));
-dayToLabel1 = [31 59 90 120 151 181 212 243 273 304 334];
-dayToLabel2 = [31 59 90 120 151 181 212 243 273 304 334] + 365;
-dayToLabel3 = [30 59 90 120 151 181 212 243 273 304 334] + 1 + 365 + 365;
-dayToLabel = [dayToLabel1 dayToLabel2 dayToLabel3];
-
-
-for m = 1 : length(xDate)
-    
-    if mod(m, 24*nBlocks*365) == 1 || mod(m, 24*nBlocks*365*2) == 1
-       xLabel{m} = datestr(xDate(m), 'yyyy-mm-dd');
+%% make xlabel
+xTickDispl = [];
+xLabel = [];
+countLable = 1;
+for d = dateStart : dateEnd
+    dateVecTemp = datevec(d);
+    if dateVecTemp(1, 2) == 1 && dateVecTemp(1, 3) == 1
+        xTickDispl = cat(2, xTickDispl, d-dateStart+1);
+        xLabel{countLable} = datestr(d, 'yyyy-mm-dd');
+        countLable = countLable + 1;
+    elseif dateVecTemp(1, 3) == 1
+        xTickDispl = cat(2, xTickDispl, d-dateStart+1);
+        xLabel{countLable} = datestr(d, 'mm-dd');
+        countLable = countLable + 1;
     end
-    
-    if intersect(m-1, dayToLabel*24*nBlocks) == m-1
-       xLabel{m} = datestr(xDate(m), 'mm-dd');
-    end
-    
+    clear dateVecTemp
 end
+countLable = countLable - 1;
+% match with the point number of rmsAll
+xTickDispl = (xTickDispl - 1) * 24 * nBlocks + 1;                          % change here
 
+%% plot and save figures
 dir.figFolder = sprintf('%s/figures_rms_HPT_%s/', dir.figSave, dateSave);
 if ~exist(dir.figFolder, 'dir')
     mkdir(dir.figFolder)
 end
 
-run('titleNames.m')
-for m = 1 : size(rmsAll, 2)
-    figure(m)
+orderPlot = [1:46 70:71 47:59];                                            % change here
+run('titleNames.m')                                                        % change here
+for f = cell2mat(orderPlot)
+    fprintf(sprintf('\nPlotting figure %d...\n', f))
+    figure(f)
     
-%     
-%     plot(rmsAll(:,m));
-%     % axis control
-%     ax = gca;
-%     ax.XTick = [1 : size(xDate, 2)];
-%     ax.XTickLabel = xLabel;
-%     ax.XTickLabelRotation = 20;  % rotation
-%     ax.TickLength = [0 0];
-%     
-% %     xlabel = 'Date';
-%     ax.YLabel.String = 'Deflection (cm)';
-%     ax.Title.String = titleName_HPT{m};
-%     
-%     set(gca, 'fontsize', 20);
-%     set(gca, 'fontname', 'Times New Roman', 'fontweight', 'bold');
-%     xlim([1  size(xDate, 2)]);
-% %     grid on
-%     
-%     % size control
-%     fig = gcf;
-%     fig.Units = 'normalized';
-%     fig.Position = [0 0.5 1 0.4];  % control figure's position
-% %     fig.Position = [0 0.75 1 0.08];  % control figure's position
-%     % set(gcf,'color','w');
-%     fig.Color = 'w';
-%     ax.Units = 'normalized';
-%     ax.Position = [0.05 0.19 0.94 0.72];  % control ax's position in figure
-    
+    plot(rmsAll(:,f), 'b');
+    % axis control
+    ax = gca;
+    ax.XTick = xTickDispl;
+    ax.XTickLabel = xLabel;
+    ax.XTickLabelRotation = 20;  % rotation
+    ax.YLabel.String = 'Deflection (mm)';
+    ax.Title.String = ['HPT: ' titleName_HPT{f}];
+    ax.Units = 'normalized';
+    ax.Position = [0.05 0.19 0.94 0.72];  % control ax's position in figure
+    set(gca, 'fontsize', 20);
+    set(gca, 'fontname', 'Times New Roman', 'fontweight', 'bold');
+    xlim([1  size(rmsAll, 1)]);
+    grid on
+    % size control
+    fig = gcf;
+    fig.Units = 'pixels';
+    fig.Position = [20 50 2500 580];  % control figure's position
+    fig.Color = 'w';
     
     % save
-    saveas(gcf, sprintf('%s/rms_HPT_chan_%d.tif', dir.figFolder, m));
-    fprintf('\nrms HPT channel %d saved.\n', m);
-    
+    saveas(gcf, sprintf('%s/rms_HPT_chan_%d.tif', dir.figFolder, f));
+    fprintf('\nrms HPT channel %d saved.\n', f);
 end
 
 run('rms_HPT_makeDocFile.m');
-
 
 
 

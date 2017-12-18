@@ -18,8 +18,11 @@ visualizeFeatures*
 plotForPaper*
 clusterOverview*
 *.emf
-figures*
+SSI
+matFiles
+figures
 hangzhouwan_beihangdao
+hangzhouwan_nanhangdao
 
 # Compiled source #
 ###################
