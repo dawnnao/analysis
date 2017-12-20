@@ -1,6 +1,6 @@
 import mlreportgen.dom.*;
 
-dir.docFile = sprintf('%s/freq_VIB_%s', dir.figSave, dateSave); % set file path
+dir.docFile = sprintf('%s/rms_DPM_%s', dir.figSave, dateSave); % set file path
 reportType = 'docx';
 doc = Document(dir.docFile, reportType);
 open(doc);
@@ -97,16 +97,16 @@ for g = 1 : length(orderPlot)
         blankObj{n} = Paragraph('');
         append(doc, blankObj{n});
     end
-    
+
     countTable = countTable + 1;
     tableObj{countTable} = Table();
     rowImg = TableRow();
     rowCap = TableRow();
     c = 1;
     for p = orderPlot{g}
-        imgsize = size(imread(sprintf('%s/freq_VIB_chan_%d.tif', dir.figFolder, p))); % get image size
+        imgsize = size(imread(sprintf('%s/rms_DPM_chan_%d.tif', dir.figFolder, p))); % get image size
         width = [num2str(1.15 * imgsize(2)/imgsize(1)) 'in'];
-        images{p} = Image(sprintf('%s/freq_VIB_chan_%d.tif', dir.figFolder, p)); % read images from folder
+        images{p} = Image(sprintf('%s/rms_DPM_chan_%d.tif', dir.figFolder, p)); % read images from folder
         images{p}.Height = '1.15in';
         images{p}.Width = width;
         append(rowImg, TableEntry(images{p}));
@@ -123,13 +123,13 @@ for g = 1 : length(orderPlot)
     %     append(rowCap, TableEntry(imageCaps{l}));
 
         if mod(c,1) == 0 % change here to customize column number of table
-            append(tableObj{countTable}, rowImg);
+            append(tableObj{countTable},rowImg);
     %         append(tableObj{countTable},rowCap);
             rowImg = TableRow();
     %         rowCap = TableRow();
-    %     elseif l == dimens(2)
-    %         append(tableObj{countTable}, rowImg);
-    %         append(tableObj{countTable}, rowCap);
+    %   elseif l == size(rmsAll, 2)
+    %       append(tableObj{countTable},rowImg);
+    %         append(tableObj{countTable},rowCap);
         end
         c = c + 1;
     end
@@ -147,9 +147,8 @@ end
 
 %% insert next section
 close(doc);
-% rptview(doc.OutputPath);
+rptview(doc.OutputPath);
 fprintf('\nDocument generated.\n')
-
 
 
 

@@ -91,8 +91,8 @@ if ~exist(dir.figFolder, 'dir')
     mkdir(dir.figFolder)
 end
 
-orderPlot = {[3:11 16:21 28:36] [45:49] [50:55] [1:2 12:15 22:27 37:44]};  % change here
 run('titleNames.m')                                                        % change here
+orderPlot = {[3:11 16:21 28:36] [45:49] [50:55] [1:2 12:15 22:27 37:44]};  % change here
 for f = cell2mat(orderPlot)
     fprintf(sprintf('\nPlotting figure %d...\n', f))
     figure(f)
@@ -114,7 +114,7 @@ for f = cell2mat(orderPlot)
     % size control
     fig = gcf;
     fig.Units = 'pixels';
-    fig.Position = [20 50 2500 580];  % control figure's position
+    fig.Position = [20 50 2500 440];  % control figure's position
     fig.Color = 'w';
     
     % save
@@ -123,6 +123,8 @@ for f = cell2mat(orderPlot)
 end
 
 run('rms_VIB_makeDocFile.m');
+
+% Elapsed time: about 70 mins
 
 
 
