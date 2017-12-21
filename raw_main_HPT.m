@@ -1,14 +1,15 @@
 clear;clc;close all
 
 %% settings
-dir.folderSource = 'D:\continuous_monitoring\data_hangzhouwan_beihangdao\';
-dir.matSave = 'D:\continuous_monitoring\analysis\matFiles\';
-dir.figSave = 'D:\continuous_monitoring\analysis\figures\';
-dateStartInput = '2016-01-10';
-dateEndInput = '2016-01-12';
+dir.folderSource = 'H:\jiashao\jiashao_2014\netmanagernj\';
+dir.matSave = 'D:\continuous_monitoring\analysis\jiashao\matFiles\';
+dir.figSave = 'D:\continuous_monitoring\analysis\jiashao\figures\';
+dateStartInput = '2014-01-08';
+dateEndInput = '2014-01-08';
+formatIn = 'yyyy-mm-dd';
 
 nickName = {'HPT'};
-dimens = [36000 36]; % [number of points , number of channels]
+dimens = [3600 71]; % [number of points , number of channels]              % change here
 
 %% plots
 formatIn = 'yyyy-mm-dd';
