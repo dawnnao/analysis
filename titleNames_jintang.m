@@ -1,4 +1,5 @@
-titleName.VIB = ...
+titleName.VIB(1:70, 1) = {' '};
+titleName.VIB = cat(1, titleName.VIB, ...
 {'AC01';
  'AC02';
  'AC03';
@@ -27,16 +28,68 @@ titleName.VIB = ...
  'AC26';
  'AC27';
  'AC28';
- 'AC29'};
+ 'AC29'});
 
 %%
-% titleName.HPT = ...
-
-
+titleName.HPT(1:28, 1) = {' '};
+titleName.HPT = cat(1, titleName.HPT, ...
+{'JT-PT30';
+ 'JT-PT29';
+ 'JT-PT31';
+ 'JT-PT33';
+ 'JT-PT32';
+ 'JT-PT34';
+ 'JT-PT36';
+ 'JT-PT35';
+ 'JT-PT37';
+ 'JT-PT39';
+ 'JT-PT38';
+ 'JT-PT41';
+ 'JT-PT40';
+ 'JT-PT42';
+ 'JT-PT43';
+ 'JT-PT45';
+ 'JT-PT44';
+ 'JT-PT46';
+ 'JT-PT48';
+ 'JT-PT47';
+ 'JT-PT49';
+ 'JT-PT51';
+ 'JT-PT50';
+ 'JT-PT53';
+ 'JT-PT52';
+ 'JT-PT56';
+ 'JT-PT55';
+ 'JT-PT54';
+ 'JT-PT57';
+ 'JT-PT59';
+ 'JT-PT58';
+ 'JT-PT60';
+ 'JT-PT61';
+ 'JT-PT63';
+ 'JT-PT62';
+ 'JT-PT65';
+ 'JT-PT64';
+ 'JT-PT66';
+ 'JT-PT68';
+ 'JT-PT67';
+ 'JT-PT69';
+ 'JT-PT71';
+ 'JT-PT70';
+ 'JT-PT72';
+ 'JT-PT74';
+ 'JT-PT73'});
 
 %%
 titleName.DPM = ...
 {'DT01';
+ 'DT02';
+ 'DT03';
+ 'DT04';
+ 'DT05';
+ 'DT06';
+ 'DT07';
+ 'DT01';
  'DT02';
  'DT03';
  'DT04';

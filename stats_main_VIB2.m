@@ -1,7 +1,7 @@
 clear;clc;close all
 
 %% settings
-% jiashao
+% % jiashao
 % dir.folderSource = 'H:/jiashao/jiashao_2014/netmanagervib/';
 % dir.saveRoot = 'D:/continuous_monitoring/analysis/jiashao/';
 % dir.figSave = dir.saveRoot;
@@ -25,27 +25,27 @@ clear;clc;close all
 % dateEndInput = '2016-12-31';
 % dimens = [180000 31]; % [number of points , number of channels]
 
-% % xihoumen
+% xihoumen
+dir.folderSource = 'F:/zhoushan_2013-2016_mat_continuous/';
+dir.saveRoot = 'D:/continuous_monitoring/analysis/xihoumen/';
+dir.figSave = dir.saveRoot;
+dateStartInput = '2014-12-01';
+dateEndInput = '2015-01-31';
+dimens = [90000 99]; % [number of points , number of channels]
+
+% % jintang
 % dir.folderSource = 'F:/zhoushan_2013-2016_mat_continuous/';
-% dir.saveRoot = 'D:/continuous_monitoring/analysis/xihoumen/';
+% dir.saveRoot = 'D:/continuous_monitoring/analysis/jintang/';
 % dir.figSave = dir.saveRoot;
 % dateStartInput = '2013-01-01';
 % dateEndInput = '2016-12-31';
 % dimens = [90000 99]; % [number of points , number of channels]
 
-% jintang
-dir.folderSource = 'F:/zhoushan_2013-2016_mat_continuous/';
-dir.saveRoot = 'D:/continuous_monitoring/analysis/jintang/';
-dir.figSave = dir.saveRoot;
-dateStartInput = '2013-01-01';
-dateEndInput = '2016-12-31';
-dimens = [90000 99]; % [number of points , number of channels]
-
 %%
 nickName = 'VIB';
 nBlocks = 6; % number of blocks for hour-data
 
-% orderPlot = {[3:11 16:21 28:36] [45:49] [50:55] [1:2 12:15 22:27 37:44]};% jiashao
+% orderPlot = {[3:11 16:21 28:36] [45:49] [50:55] [1:2 12:15 22:27 37:44]};  % jiashao
 % run('titleNames_jiashao.m')     
 
 % orderPlot = {[10:14 26:35 1:9 36 48:55], [15:22 37:44], [45:47 23:25]};  % hangzhouwan BHD
@@ -54,11 +54,11 @@ nBlocks = 6; % number of blocks for hour-data
 % orderPlot = {[1:7 19:28] [8:15] [16:18 29:31]};                          % hangzhouwan NHD
 % run('titleNames_hangzhouwan_NHD.m')
 
-% orderPlot = {[1:30] [31:50]};                                            % xihoumen
-% run('titleNames_xihoumen.m')
+orderPlot = {[1:30] [31:50]};                                              % xihoumen
+run('titleNames_xihoumen.m')
 
-orderPlot = {[71:99]};                                                     % jintang
-run('titleNames_jintang.m')
+% orderPlot = {[71:99]};                                                   % jintang
+% run('titleNames_jintang.m')
 
 %% computation
 formatIn = 'yyyy-mm-dd';
@@ -102,19 +102,19 @@ for d = dateStart : dateEnd
             
             % basic stats
             fprintf('\nCalculating max, rms and min...\n')            
-            maxBlocks = calcuStats('max', dataTemp.data, nBlocks, nickName);
+            maxBlocks = calcuStats2('max', dataTemp.data, nBlocks, nickName);
             maxAll = cat(1, maxAll, maxBlocks);
             clear maxBlocks
             
-            rmsBlocks = calcuStats('rms', dataTemp.data, nBlocks, nickName);
+            rmsBlocks = calcuStats2('rms', dataTemp.data, nBlocks, nickName);
             rmsAll = cat(1, rmsAll, rmsBlocks);
             clear rmsBlocks
             
-            minBlocks = calcuStats('min', dataTemp.data, nBlocks, nickName);
+            minBlocks = calcuStats2('min', dataTemp.data, nBlocks, nickName);
             minAll = cat(1, minAll, minBlocks);
             clear minBlocks
             
-            if h == 0
+            if h == 0                
                 % compute frequency response
                 dataTemp.data(abs(dataTemp.data) > 100) = 0; % clean outliers
                 fprintf('\nComputing frequency response...\n')
@@ -157,7 +157,7 @@ end
 
 formatOut = 'yyyy_mm_dd_HH_MM';
 dateSave = datestr(datetime('now'), formatOut);
-fprintf('\nSaving results...\n')						
+fprintf('\nSaving results...\n')
 save(sprintf('%s/stats_%s_%s.mat', dir.saveRoot, nickName, dateSave), '-v7.3');
 fprintf('\nData saved.\n')
 
@@ -222,7 +222,7 @@ for f = cell2mat(orderPlot)
     % save
     saveas(gcf, sprintf('%s/stats_%s_chan_%d_basic.tif', dir.figFolderBasic, nickName, f));
     fprintf('\nstats %s channel %d saved.\n', nickName, f);
-    close
+%     close
 end
 
 %% plot frequency response -- make label

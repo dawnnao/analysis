@@ -1,4 +1,4 @@
-function  outBlocks = calcuStats(item, data, n, nickName, column, referPoint)
+function  outBlocks = calcuStats2(item, data, n, nickName, column, referPoint)
 % Split data to n blocks and calculate max value for each block. In each block,
 % max values are calculated by each column.
 
@@ -11,7 +11,7 @@ switch nickName
         end
     case 'VIB'
         for c = 1 : size(data, 2)
-            data(abs(data(:,c)) > 100, c) = 0; %nanmedian(data(:,c)); jiashao: 100 | xihoumen: 1000
+            data(abs(data(:,c)) > 1000, c) = 0; %nanmedian(data(:,c)); jiashao: 100 | xihoumen: 1000
         end
     case 'HPT'
         for c = 1 : size(data, 2)

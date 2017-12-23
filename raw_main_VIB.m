@@ -17,6 +17,7 @@ dateEnd   = datenum(dateEndInput, formatIn);
 dayTotal = dateEnd-dateStart+1;
 count = 1;
 rawAll = [];
+
 for d = dateStart : dateEnd
     string = datestr(d);
     
@@ -105,25 +106,25 @@ for f = cell2mat(orderPlot)
     fprintf(sprintf('\nPlotting figure %d...\n', f))
     figure(f)
     
-%     plot(rawAll(:,f), 'b');
-%     % axis control
-%     ax = gca;
-%     ax.XTick = xTickDispl;
-%     ax.XTickLabel = xLabel;
-%     ax.XTickLabelRotation = 20;  % rotation
-%     ax.YLabel.String = 'Accel. RMS (gal)';
-%     ax.Title.String = ['Vibration: ' titleName_VIB{f}];
-%     ax.Units = 'normalized';
-%     ax.Position = [0.16 0.13 0.82 0.82];  % control ax's position in figure
-%     set(gca, 'fontsize', 20);
-%     set(gca, 'fontname', 'Times New Roman', 'fontweight', 'bold');
-%     xlim([1  size(rawAll, 1)]);
-%     grid on
-%     % size control
-%     fig = gcf;
-%     fig.Units = 'pixels';
-%     fig.Position = [20 50 1000 800];  % control figure's position
-%     fig.Color = 'w';
+    plot(rawAll(:,f), 'b');
+    % axis control
+    ax = gca;
+    ax.XTick = xTickDispl;
+    ax.XTickLabel = xLabel;
+    ax.XTickLabelRotation = 20;  % rotation
+    ax.YLabel.String = 'Accel. RMS (gal)';
+    ax.Title.String = ['Vibration: ' titleName_VIB{f}];
+    ax.Units = 'normalized';
+    ax.Position = [0.16 0.13 0.82 0.82];  % control ax's position in figure
+    set(gca, 'fontsize', 20);
+    set(gca, 'fontname', 'Times New Roman', 'fontweight', 'bold');
+    xlim([1  size(rawAll, 1)]);
+    grid on
+    % size control
+    fig = gcf;
+    fig.Units = 'pixels';
+    fig.Position = [20 50 1000 800];  % control figure's position
+    fig.Color = 'w';
     
     % save
     saveas(gcf, sprintf('%s/raw_VIB_chan_%d.tif', dir.figFolder, f));

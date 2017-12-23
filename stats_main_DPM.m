@@ -25,21 +25,21 @@ clear;clc;close all
 % dateEndInput = '2016-12-31';
 % dimens = [36000 10]; % [number of points , number of channels]
 
-% xihoumen
-dir.folderSource = 'F:/zhoushan_2013-2016_mat_continuous/';
-dir.saveRoot = 'D:/continuous_monitoring/analysis/xihoumen/';
-dir.figSave = dir.saveRoot;
-dateStartInput = '2013-01-01';
-dateEndInput = '2013-01-31';
-dimens = [3600 13]; % [number of points , number of channels]
-
-% % jintang
+% % xihoumen
 % dir.folderSource = 'F:/zhoushan_2013-2016_mat_continuous/';
-% dir.saveRoot = 'D:/continuous_monitoring/analysis/jintang/';
+% dir.saveRoot = 'D:/continuous_monitoring/analysis/xihoumen/';
 % dir.figSave = dir.saveRoot;
 % dateStartInput = '2013-01-01';
 % dateEndInput = '2016-12-31';
 % dimens = [3600 13]; % [number of points , number of channels]
+
+% jintang
+dir.folderSource = 'F:/zhoushan_2013-2016_mat_continuous/';
+dir.saveRoot = 'D:/continuous_monitoring/analysis/jintang/';
+dir.figSave = dir.saveRoot;
+dateStartInput = '2013-01-01';
+dateEndInput = '2016-12-31';
+dimens = [3600 13]; % [number of points , number of channels]
 
 %%
 nickName = 'DPM';
@@ -54,11 +54,11 @@ nBlocks = 6; % number of blocks for hour-data
 % orderPlot = {[1:9] [10]};                                                % hangzhouwan NHD
 % run('titleNames_hangzhouwan_NHD.m')
 
-orderPlot = {[1:7]};                                                       % xihoumen
-run('titleNames_xihoumen.m')
+% orderPlot = {[1:7]};                                                     % xihoumen
+% run('titleNames_xihoumen.m')
 
-% orderPlot = {[8:13]};                                                    % jintang
-% run('titleNames_jintang.m')
+orderPlot = {[8:13]};                                                    % jintang
+run('titleNames_jintang.m')
 
 %% computation
 formatIn = 'yyyy-mm-dd';
@@ -109,17 +109,17 @@ for d = dateStart : dateEnd
             minAll = cat(1, minAll, minBlocks);
             clear minBlocks
             
-            if h == 0
-                % compute frequency response
-                dataTemp.data(abs(dataTemp.data) > 100) = 0; % clean outliers
-                fprintf('\nComputing frequency response...\n')
-                for f = cell2mat(orderPlot)
-                    [pxx{f}(:, countFreq), freq{f}(:, countFreq)] = cpsd(dataTemp.data(:,f), dataTemp.data(:,f), ...
-                        hanning(nfft/4), nfft*1.5/8, nfft, dimens(1)/3600);                
-                end
-                countFreq = countFreq + 1;
-                clear dataTemp
-            end
+%             if h == 0
+%                 % compute frequency response
+%                 dataTemp.data(abs(dataTemp.data) > 100) = 0; % clean outliers
+%                 fprintf('\nComputing frequency response...\n')
+%                 for f = cell2mat(orderPlot)
+%                     [pxx{f}(:, countFreq), freq{f}(:, countFreq)] = cpsd(dataTemp.data(:,f), dataTemp.data(:,f), ...
+%                         hanning(nfft/4), nfft*1.5/8, nfft, dimens(1)/3600);                
+%                 end
+%                 countFreq = countFreq + 1;
+%                 clear dataTemp
+%             end
             
         else
             fprintf('\n%s no such folder.\n', dir.dateFolderRead)
@@ -169,32 +169,34 @@ end
 
 titles = getfield(titleName, nickName);
 for f = cell2mat(orderPlot)
+    fprintf(sprintf('\nPlotting figure %d...\n', f))
     figure(f)
-    plot(maxAll(:,f), 'r', 'LineWidth', 1);
-    hold on
-    plot(rmsAll(:,f), 'b', 'LineWidth', 1);
-    hold on
-    plot(minAll(:,f), 'g', 'LineWidth', 1);
-    hold off
-    legend('MAX', 'RMS', 'MIN', 'Location', 'bestoutside')
-    % axis control
-    ax = gca;
-    ax.XTick = xTickDispl;
-    ax.XTickLabel = xLabel;
-    ax.XTickLabelRotation = 20;  % rotation
-    ax.YLabel.String = 'Displ. (mm)';                                      
-    ax.Title.String = [sprintf('%s: ', nickName) titles{f}];
-    ax.Units = 'normalized';
-    ax.Position = [0.05 0.19 0.9 0.72];  % control ax's position in figure
-    set(gca, 'fontsize', 20);
-    set(gca, 'fontname', 'Times New Roman', 'fontweight', 'bold');
-    xlim([1  size(rmsAll, 1)]);
-    grid on
-    % size control
-    fig = gcf;
-    fig.Units = 'pixels';
-    fig.Position = [20 550 2500 440];  % control figure's position
-    fig.Color = 'w';
+    
+%     plot(maxAll(:,f), 'r', 'LineWidth', 1);
+%     hold on
+%     plot(rmsAll(:,f), 'b', 'LineWidth', 1);
+%     hold on
+%     plot(minAll(:,f), 'g', 'LineWidth', 1);
+%     hold off
+%     legend('MAX', 'RMS', 'MIN', 'Location', 'bestoutside')
+%     % axis control
+%     ax = gca;
+%     ax.XTick = xTickDispl;
+%     ax.XTickLabel = xLabel;
+%     ax.XTickLabelRotation = 23;  % rotation
+%     ax.YLabel.String = 'Displ. (mm)';                                      
+%     ax.Title.String = [sprintf('%s: ', nickName) titles{f}];
+%     ax.Units = 'normalized';
+%     ax.Position = [0.05 0.19 0.9 0.72];  % control ax's position in figure
+%     set(gca, 'fontsize', 20);
+%     set(gca, 'fontname', 'Times New Roman', 'fontweight', 'bold');
+%     xlim([1  size(rmsAll, 1)]);
+%     grid on
+%     % size control
+%     fig = gcf;
+%     fig.Units = 'pixels';
+%     fig.Position = [20 550 2500 440];  % control figure's position
+%     fig.Color = 'w';
     
     % save
     saveas(gcf, sprintf('%s/stats_%s_chan_%d_basic.tif', dir.figFolderBasic, nickName, f));
@@ -203,64 +205,64 @@ for f = cell2mat(orderPlot)
 end
 
 %% plot frequency response -- make label
-xTickDispl = [];
-xLabel = [];
-countLable = 1;
-for d = dateStart : dateEnd
-    dateVecTemp = datevec(d);
-    if dateVecTemp(1, 2) == 1 && dateVecTemp(1, 3) == 1
-        xTickDispl = cat(2, xTickDispl, d-dateStart+1);
-        xLabel{countLable} = datestr(d, 'yyyy-mm-dd');
-        countLable = countLable + 1;
-    elseif dateVecTemp(1, 3) == 1
-        xTickDispl = cat(2, xTickDispl, d-dateStart+1);
-        xLabel{countLable} = datestr(d, 'mm-dd');
-        countLable = countLable + 1;
-    end
-    clear dateVecTemp
-end
-countLable = countLable - 1;
-% match with the point number of rmsAll
-xTickDispl = (xTickDispl - 1) + 1;                                    
-
-% plot frequency response -- plot and save figures
-dir.figFolderFreq = sprintf('%s/stats_%s_%s_freq/', dir.figSave, nickName, dateSave);
-if ~exist(dir.figFolderFreq, 'dir')
-    mkdir(dir.figFolderFreq)
-end
-
-titles = getfield(titleName, nickName);
-for f = cell2mat(orderPlot)
-    fprintf(sprintf('\nPlotting figure %d...\n', f))
-    figure(f)
-    
-    contour(1:size(pxx{f}, 2), freq{f}(:,1), log(real(pxx{f})), 300);
-    colorbar('FontSize', 18, 'FontName', 'Times new roman');
-    colormap jet
-    % axis control
-    ax = gca;
-    ax.XTick = xTickDispl;
-    ax.XTickLabel = xLabel;
-    ax.XTickLabelRotation = 20;  % rotation
-    ax.YLabel.String = 'Frequency (Hz)';
-    ax.Title.String = [sprintf('%s: ', nickName) titles{f}];
-    ax.Units = 'normalized';
-    ax.Position = [0.05 0.18 0.9 0.73];  % control ax's position in figure
-    set(gca, 'fontsize', 20);
-    set(gca, 'fontname', 'Times New Roman', 'fontweight', 'bold');
-    xlim([1  size(pxx{1}, 2)]);
-    % size control
-    fig = gcf;
-    fig.Units = 'pixels';
-    fig.Position = [20 50 2500 440];  % control figure's position
-    fig.Color = 'w';
-%     pause(10)
-    
-    % save
-    saveas(gcf, sprintf('%s/stats_%s_chan_%d_freq.tif', dir.figFolderFreq, nickName, f));
-    fprintf('\nfreq %s channel %d saved.\n', nickName, f);
-    close
-end
+% xTickDispl = [];
+% xLabel = [];
+% countLable = 1;
+% for d = dateStart : dateEnd
+%     dateVecTemp = datevec(d);
+%     if dateVecTemp(1, 2) == 1 && dateVecTemp(1, 3) == 1
+%         xTickDispl = cat(2, xTickDispl, d-dateStart+1);
+%         xLabel{countLable} = datestr(d, 'yyyy-mm-dd');
+%         countLable = countLable + 1;
+%     elseif dateVecTemp(1, 3) == 1
+%         xTickDispl = cat(2, xTickDispl, d-dateStart+1);
+%         xLabel{countLable} = datestr(d, 'mm-dd');
+%         countLable = countLable + 1;
+%     end
+%     clear dateVecTemp
+% end
+% countLable = countLable - 1;
+% % match with the point number of rmsAll
+% xTickDispl = (xTickDispl - 1) + 1;                                    
+% 
+% % plot frequency response -- plot and save figures
+% dir.figFolderFreq = sprintf('%s/stats_%s_%s_freq/', dir.figSave, nickName, dateSave);
+% if ~exist(dir.figFolderFreq, 'dir')
+%     mkdir(dir.figFolderFreq)
+% end
+% 
+% titles = getfield(titleName, nickName);
+% for f = cell2mat(orderPlot)
+%     fprintf(sprintf('\nPlotting figure %d...\n', f))
+%     figure(f)
+%     
+%     contour(1:size(pxx{f}, 2), freq{f}(:,1), log(real(pxx{f})), 300);
+%     colorbar('FontSize', 18, 'FontName', 'Times new roman');
+%     colormap jet
+%     % axis control
+%     ax = gca;
+%     ax.XTick = xTickDispl;
+%     ax.XTickLabel = xLabel;
+%     ax.XTickLabelRotation = 20;  % rotation
+%     ax.YLabel.String = 'Frequency (Hz)';
+%     ax.Title.String = [sprintf('%s: ', nickName) titles{f}];
+%     ax.Units = 'normalized';
+%     ax.Position = [0.05 0.18 0.9 0.73];  % control ax's position in figure
+%     set(gca, 'fontsize', 20);
+%     set(gca, 'fontname', 'Times New Roman', 'fontweight', 'bold');
+%     xlim([1  size(pxx{1}, 2)]);
+%     % size control
+%     fig = gcf;
+%     fig.Units = 'pixels';
+%     fig.Position = [20 50 2500 440];  % control figure's position
+%     fig.Color = 'w';
+% %     pause(10)
+%     
+%     % save
+%     saveas(gcf, sprintf('%s/stats_%s_chan_%d_freq.tif', dir.figFolderFreq, nickName, f));
+%     fprintf('\nfreq %s channel %d saved.\n', nickName, f);
+%     close
+% end
 
 %%
 run('stats_makeDocFile_DPM.m');
