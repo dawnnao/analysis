@@ -10,14 +10,14 @@ clear;clc;close all
 % dimens = [3600 71]; % [number of points , number of channels]
 % run('referPoints_jiashao.m');
 
-% % hangzhouwan BHD
-% dir.folderSource = 'F:/hangzhouwan/hangzhouwan_2014-2016_mat/BHD/';
-% dir.saveRoot = 'D:/continuous_monitoring/analysis/hangzhouwan_beihangdao/';
-% dir.figSave = dir.saveRoot;
-% dateStartInput = '2014-01-01';
-% dateEndInput = '2016-12-31';
-% dimens = [36000 36]; % [number of points , number of channels]
-% run('referPoints_hangzhouwan_BHD.m');
+% hangzhouwan BHD
+dir.folderSource = 'F:/hangzhouwan/hangzhouwan_2014-2016_mat/BHD/';
+dir.saveRoot = 'D:/continuous_monitoring/analysis/hangzhouwan_beihangdao/';
+dir.figSave = dir.saveRoot;
+dateStartInput = '2014-01-01';
+dateEndInput = '2016-12-31';
+dimens = [36000 36]; % [number of points , number of channels]
+run('referPoints_hangzhouwan_BHD.m');
 
 % % hangzhouwan NHD
 % dir.folderSource = 'F:/hangzhouwan/hangzhouwan_2014-2016_mat/NHD/';
@@ -37,31 +37,32 @@ clear;clc;close all
 % dimens = []; % [number of points , number of channels]
 % run('referPoints_xihoumen.m');
 
-% jintang
-dir.folderSource = 'F:/zhoushan_2013-2016_mat_continuous/';
-dir.saveRoot = 'D:/continuous_monitoring/analysis/jintang/';
-dir.figSave = dir.saveRoot;
-dateStartInput = '2013-01-01';
-dateEndInput = '2016-12-31';
-dimens = [3600 78]; % [number of points , number of channels]
-run('referPoints_jintang.m');
+% % jintang
+% dir.folderSource = 'F:/zhoushan_2013-2016_mat_continuous/';
+% dir.saveRoot = 'D:/continuous_monitoring/analysis/jintang/';
+% dir.figSave = dir.saveRoot;
+% dateStartInput = '2013-01-01';
+% dateEndInput = '2016-12-31';
+% dimens = [3600 78]; % [number of points , number of channels]
+% run('referPoints_jintang.m');
 
 %%
 % orderPlot = {[1:46 70:71], [47:59]};                                     % jiashao
 % run('titleNames_jiashao.m')
 % column = [min(cell2mat(orderPlot)) : max(cell2mat(orderPlot))];
 
-% orderPlot = {[1:36]};                                                    % hangzhouwan BHD
-% run('titleNames_hangzhouwan_BHD.m')
+orderPlot = {[1:36]};                                                    % hangzhouwan BHD
+run('titleNames_hangzhouwan_BHD.m')
+columnHPT = [1:36];
 
 % orderPlot = {[1:18]};                                                    % hangzhouwan NHD
 % run('titleNames_hangzhouwan_NHD.m')
 
 % no HPT for xihoumen
 
-orderPlot = {[29:74]};                                                     % jintang
-run('titleNames_jintang.m')
-column = [29:74];
+% orderPlot = {[29:74]};                                                     % jintang
+% run('titleNames_jintang.m')
+% columnHPT = [29:74];
 
 %%
 nickName = 'HPT';
@@ -78,7 +79,7 @@ countFreq = 1;
 rmsAll = [];
 maxAll = [];
 minAll = [];
-nfft = 2048*2;
+nfft = 1024;
 
 for d = dateStart : dateEnd
     string = datestr(d);
@@ -105,29 +106,29 @@ for d = dateStart : dateEnd
             
             % basic stats
             fprintf('\nCalculating max, rms and min...\n')            
-            maxBlocks = calcuStats('max', dataTemp.data, nBlocks, nickName, column, referPoints);
+            maxBlocks = calcuStats('max', dataTemp.data, nBlocks, nickName, columnHPT, referPoints);
             maxAll = cat(1, maxAll, maxBlocks);
             clear maxBlocks
             
-            rmsBlocks = calcuStats('rms', dataTemp.data, nBlocks, nickName, column, referPoints);
+            rmsBlocks = calcuStats('rms', dataTemp.data, nBlocks, nickName, columnHPT, referPoints);
             rmsAll = cat(1, rmsAll, rmsBlocks);
             clear rmsBlocks
             
-            minBlocks = calcuStats('min', dataTemp.data, nBlocks, nickName, column, referPoints);
+            minBlocks = calcuStats('min', dataTemp.data, nBlocks, nickName, columnHPT, referPoints);
             minAll = cat(1, minAll, minBlocks);
             clear minBlocks
             
-%             if h == 0
-%                 % compute frequency response
-%                 dataTemp.data(abs(dataTemp.data) > 100) = 0; % clean outliers
-%                 fprintf('\nComputing frequency response...\n')
-%                 for f = cell2mat(orderPlot)
-%                     [pxx{f}(:, countFreq), freq{f}(:, countFreq)] = cpsd(dataTemp.data(:,f), dataTemp.data(:,f), ...
-%                         hanning(nfft/4), nfft*1.5/8, nfft, dimens(1)/3600);                
-%                 end
-%                 countFreq = countFreq + 1;
-%                 clear dataTemp
-%             end
+            if h == 0
+                % compute frequency response
+                dataTemp.data(abs(dataTemp.data) > 100) = 0; % clean outliers
+                fprintf('\nComputing frequency response...\n')
+                for f = cell2mat(orderPlot)
+                    [pxx{f}(1:(nfft/2+1), countFreq), freq{f}(1:(nfft/2+1), countFreq)] = cpsd(dataTemp.data(:,f), dataTemp.data(:,f), ...
+                        nfft, [], [], dimens(1)/3600);
+                end
+                countFreq = countFreq + 1;
+                clear dataTemp
+            end
             
         else
             fprintf('\n%s no such folder.\n', dir.dateFolderRead)
@@ -179,36 +180,36 @@ titles = getfield(titleName, nickName);
 for f = cell2mat(orderPlot)
     figure(f)
     
-%     plot(maxAll(:,f), 'r', 'LineWidth', 1);
-%     hold on
-%     plot(rmsAll(:,f), 'b', 'LineWidth', 1);
-%     hold on
-%     plot(minAll(:,f), 'g', 'LineWidth', 1);
-%     hold off
-%     legend('MAX', 'RMS', 'MIN', 'Location', 'bestoutside')
-%     % axis control
-%     ax = gca;
-%     ax.XTick = xTickDispl;
-%     ax.XTickLabel = xLabel;
-%     ax.XTickLabelRotation = 20;  % rotation
-%     ax.YLabel.String = 'Deflection (mm)';                                  
-%     ax.Title.String = [sprintf('%s: ', nickName) titles{f}];
-%     ax.Units = 'normalized';
-%     ax.Position = [0.05 0.19 0.9 0.72];  % control ax's position in figure
-%     set(gca, 'fontsize', 20);
-%     set(gca, 'fontname', 'Times New Roman', 'fontweight', 'bold');
-%     xlim([1  size(rmsAll, 1)]);
-%     grid on
-%     % size control
-%     fig = gcf;
-%     fig.Units = 'pixels';
-%     fig.Position = [20 550 2500 440];  % control figure's position
-%     fig.Color = 'w';
+    plot(maxAll(:,f), 'r', 'LineWidth', 1);
+    hold on
+    plot(rmsAll(:,f), 'b', 'LineWidth', 1);
+    hold on
+    plot(minAll(:,f), 'g', 'LineWidth', 1);
+    hold off
+    legend('MAX', 'RMS', 'MIN', 'Location', 'bestoutside')
+    % axis control
+    ax = gca;
+    ax.XTick = xTickDispl;
+    ax.XTickLabel = xLabel;
+    ax.XTickLabelRotation = 20;  % rotation
+    ax.YLabel.String = 'Deflection (mm)';                                  
+    ax.Title.String = [sprintf('%s: ', nickName) titles{f}];
+    ax.Units = 'normalized';
+    ax.Position = [0.05 0.19 0.9 0.72];  % control ax's position in figure
+    set(gca, 'fontsize', 20);
+    set(gca, 'fontname', 'Times New Roman', 'fontweight', 'bold');
+    xlim([1  size(rmsAll, 1)]);
+    grid on
+    % size control
+    fig = gcf;
+    fig.Units = 'pixels';
+    fig.Position = [20 550 2500 440];  % control figure's position
+    fig.Color = 'w';
     
     % save
     saveas(gcf, sprintf('%s/stats_%s_chan_%d_basic.tif', dir.figFolderBasic, nickName, f));
     fprintf('\nstats %s channel %d saved.\n', nickName, f);
-%     close
+    close
 end
 
 %% plot frequency response -- make label

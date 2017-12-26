@@ -6,17 +6,17 @@ function  outBlocks = calcuStats2(item, data, n, nickName, column, referPoint)
 switch nickName
     case 'DPM'
         for c = 1 : size(data, 2)
-            data(abs(data(:,c)) > 5000, c) = NaN; %nanmedian(data(:,c)); jiashao: 2000 | xihoumen: 5000
-            data(abs(data(:,c)) < 1, c) = NaN; %nanmedian(data(:,c));    jiashao:  100 | xihoumen:    1
+            data(abs(data(:,c)) > 5000, c) = NaN; % jiashao: 2000 | zhoushan: 5000 | hangzhouwan: 2000
+            data(abs(data(:,c)) < 1, c) = NaN;    % jiashao:  100 | zhoushan:    1 | hangzhouwan:    1
         end
     case 'VIB'
         for c = 1 : size(data, 2)
-            data(abs(data(:,c)) > 1000, c) = 0; %nanmedian(data(:,c)); jiashao: 100 | xihoumen: 1000
+            data(abs(data(:,c)) > 100, c) = 0;    % jiashao:  100 | zhoushan: 1000 | hangzhouwan:  100
         end
     case 'HPT'
         for c = 1 : size(data, 2)
-            data(abs(data(:,c)) > 9000, c) = NaN; %nanmedian(data(:,c));
-            data(abs(data(:,c)) < 1, c) = NaN;
+            data(abs(data(:,c)) > 2000, c) = NaN; % jiashao: 9000 | zhoushan:      | hangzhouwan: 2000
+            data(abs(data(:,c)) < 1, c) = NaN;    % jiashao:    1 | zhoushan:      | hangzhouwan:    1
         end
         data(:, column) = data(:, column) - data(:, referPoint);
 end

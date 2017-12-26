@@ -9,13 +9,13 @@ clear;clc;close all
 % dateEndInput = '2014-12-31';
 % dimens = [3600 54]; % [number of points , number of channels]
 
-% % hangzhouwan BHD
-% dir.folderSource = 'F:/hangzhouwan/hangzhouwan_2014-2016_mat/BHD/';
-% dir.saveRoot = 'D:/continuous_monitoring/analysis/hangzhouwan_beihangdao/';
-% dir.figSave = dir.saveRoot;
-% dateStartInput = '2014-01-01';
-% dateEndInput = '2016-12-31';
-% dimens = [36000 13]; % [number of points , number of channels]
+% hangzhouwan BHD
+dir.folderSource = 'F:/hangzhouwan/hangzhouwan_2014-2016_mat/BHD/';
+dir.saveRoot = 'D:/continuous_monitoring/analysis/hangzhouwan_beihangdao/';
+dir.figSave = dir.saveRoot;
+dateStartInput = '2014-01-01';
+dateEndInput = '2016-12-31';
+dimens = [36000 13]; % [number of points , number of channels]
 
 % % hangzhouwan NHD
 % dir.folderSource = 'F:/hangzhouwan/hangzhouwan_2014-2016_mat/NHD/';
@@ -33,13 +33,13 @@ clear;clc;close all
 % dateEndInput = '2016-12-31';
 % dimens = [3600 13]; % [number of points , number of channels]
 
-% jintang
-dir.folderSource = 'F:/zhoushan_2013-2016_mat_continuous/';
-dir.saveRoot = 'D:/continuous_monitoring/analysis/jintang/';
-dir.figSave = dir.saveRoot;
-dateStartInput = '2013-01-01';
-dateEndInput = '2016-12-31';
-dimens = [3600 13]; % [number of points , number of channels]
+% % jintang
+% dir.folderSource = 'F:/zhoushan_2013-2016_mat_continuous/';
+% dir.saveRoot = 'D:/continuous_monitoring/analysis/jintang/';
+% dir.figSave = dir.saveRoot;
+% dateStartInput = '2013-01-01';
+% dateEndInput = '2016-12-31';
+% dimens = [3600 13]; % [number of points , number of channels]
 
 %%
 nickName = 'DPM';
@@ -48,8 +48,8 @@ nBlocks = 6; % number of blocks for hour-data
 % orderPlot = {[1:6], [7:54]};                                             % jiashao 
 % run('titleNames_jiashao.m')                                                
 
-% orderPlot = {[1:10], [11:12], [13]};                                     % hangzhouwan BHD
-% run('titleNames_hangzhouwan_BHD.m')                                        
+orderPlot = {[1:10], [11:12], [13]};                                     % hangzhouwan BHD
+run('titleNames_hangzhouwan_BHD.m')                                        
 
 % orderPlot = {[1:9] [10]};                                                % hangzhouwan NHD
 % run('titleNames_hangzhouwan_NHD.m')
@@ -57,8 +57,8 @@ nBlocks = 6; % number of blocks for hour-data
 % orderPlot = {[1:7]};                                                     % xihoumen
 % run('titleNames_xihoumen.m')
 
-orderPlot = {[8:13]};                                                    % jintang
-run('titleNames_jintang.m')
+% orderPlot = {[8:13]};                                                    % jintang
+% run('titleNames_jintang.m')
 
 %% computation
 formatIn = 'yyyy-mm-dd';
@@ -70,7 +70,7 @@ countFreq = 1;
 rmsAll = [];
 maxAll = [];
 minAll = [];
-nfft = 2048*2;
+nfft = 1024;
 
 for d = dateStart : dateEnd
     string = datestr(d);
@@ -109,17 +109,17 @@ for d = dateStart : dateEnd
             minAll = cat(1, minAll, minBlocks);
             clear minBlocks
             
-%             if h == 0
-%                 % compute frequency response
-%                 dataTemp.data(abs(dataTemp.data) > 100) = 0; % clean outliers
-%                 fprintf('\nComputing frequency response...\n')
-%                 for f = cell2mat(orderPlot)
-%                     [pxx{f}(:, countFreq), freq{f}(:, countFreq)] = cpsd(dataTemp.data(:,f), dataTemp.data(:,f), ...
-%                         hanning(nfft/4), nfft*1.5/8, nfft, dimens(1)/3600);                
-%                 end
-%                 countFreq = countFreq + 1;
-%                 clear dataTemp
-%             end
+            if h == 0
+                % compute frequency response
+                dataTemp.data(abs(dataTemp.data) > 100) = 0; % clean outliers
+                fprintf('\nComputing frequency response...\n')
+                for f = cell2mat(orderPlot)
+                    [pxx{f}(1:(nfft/2+1), countFreq), freq{f}(1:(nfft/2+1), countFreq)] = cpsd(dataTemp.data(:,f), dataTemp.data(:,f), ...
+                        nfft, [], [], dimens(1)/3600);
+                end
+                countFreq = countFreq + 1;
+                clear dataTemp
+            end
             
         else
             fprintf('\n%s no such folder.\n', dir.dateFolderRead)

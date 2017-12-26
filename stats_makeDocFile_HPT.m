@@ -114,6 +114,7 @@ for g = 1 : length(orderPlot)
         images{p}.Height = '1.15in';
         images{p}.Width = width;
         append(rowImg{1}, TableEntry(images{p}));
+        
 %         % stats freq
 %         imgsize = size(imread(sprintf('%s/stats_%s_chan_%d_freq.tif', dir.figFolderFreq, nickName, p))); % get image size
 %         width = [num2str(1.15 * imgsize(2)/imgsize(1)) 'in'];
