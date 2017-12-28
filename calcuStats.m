@@ -11,7 +11,7 @@ switch nickName
         end
     case 'VIB'
         for c = 1 : size(data, 2)
-            data(abs(data(:,c)) > 100, c) = 0;    % jiashao:  100 | zhoushan: 1000 | hangzhouwan:  100
+            data(abs(data(:,c)) > 1000, c) = 0;    % jiashao:  100 | zhoushan: 1000 | hangzhouwan:  100
         end
     case 'HPT'
         for c = 1 : size(data, 2)

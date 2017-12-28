@@ -9,13 +9,13 @@ clear;clc;close all
 % dateEndInput = '2014-12-31';
 % dimens = [3600 54]; % [number of points , number of channels]
 
-% hangzhouwan BHD
-dir.folderSource = 'F:/hangzhouwan/hangzhouwan_2014-2016_mat/BHD/';
-dir.saveRoot = 'D:/continuous_monitoring/analysis/hangzhouwan_beihangdao/';
-dir.figSave = dir.saveRoot;
-dateStartInput = '2014-01-01';
-dateEndInput = '2016-12-31';
-dimens = [36000 13]; % [number of points , number of channels]
+% % hangzhouwan BHD
+% dir.folderSource = 'F:/hangzhouwan/hangzhouwan_2014-2016_mat/BHD/';
+% dir.saveRoot = 'D:/continuous_monitoring/analysis/hangzhouwan_beihangdao/';
+% dir.figSave = dir.saveRoot;
+% dateStartInput = '2014-01-01';
+% dateEndInput = '2016-12-31';
+% dimens = [36000 13]; % [number of points , number of channels]
 
 % % hangzhouwan NHD
 % dir.folderSource = 'F:/hangzhouwan/hangzhouwan_2014-2016_mat/NHD/';
@@ -26,20 +26,22 @@ dimens = [36000 13]; % [number of points , number of channels]
 % dimens = [36000 10]; % [number of points , number of channels]
 
 % % xihoumen
-% dir.folderSource = 'F:/zhoushan_2013-2016_mat_continuous/';
+% % dir.folderSource = 'F:/zhoushan_2013-2016_mat_continuous/';
+% dir.folderSource = 'F:/zhoushan_2017_mat/';
 % dir.saveRoot = 'D:/continuous_monitoring/analysis/xihoumen/';
 % dir.figSave = dir.saveRoot;
-% dateStartInput = '2013-01-01';
-% dateEndInput = '2016-12-31';
+% dateStartInput = '2017-01-01';
+% dateEndInput = '2017-11-30';
 % dimens = [3600 13]; % [number of points , number of channels]
 
-% % jintang
+% jintang
 % dir.folderSource = 'F:/zhoushan_2013-2016_mat_continuous/';
-% dir.saveRoot = 'D:/continuous_monitoring/analysis/jintang/';
-% dir.figSave = dir.saveRoot;
-% dateStartInput = '2013-01-01';
-% dateEndInput = '2016-12-31';
-% dimens = [3600 13]; % [number of points , number of channels]
+dir.folderSource = 'F:/zhoushan_2017_mat/';
+dir.saveRoot = 'D:/continuous_monitoring/analysis/jintang/';
+dir.figSave = dir.saveRoot;
+dateStartInput = '2017-01-01';
+dateEndInput = '2017-11-30';
+dimens = [3600 13]; % [number of points , number of channels]
 
 %%
 nickName = 'DPM';
@@ -48,17 +50,17 @@ nBlocks = 6; % number of blocks for hour-data
 % orderPlot = {[1:6], [7:54]};                                             % jiashao 
 % run('titleNames_jiashao.m')                                                
 
-orderPlot = {[1:10], [11:12], [13]};                                     % hangzhouwan BHD
-run('titleNames_hangzhouwan_BHD.m')                                        
+% orderPlot = {[1:10], [11:12], [13]};                                     % hangzhouwan BHD
+% run('titleNames_hangzhouwan_BHD.m')                                        
 
 % orderPlot = {[1:9] [10]};                                                % hangzhouwan NHD
 % run('titleNames_hangzhouwan_NHD.m')
 
-% orderPlot = {[1:7]};                                                     % xihoumen
+% orderPlot = {[1:7]};                                                       % xihoumen
 % run('titleNames_xihoumen.m')
 
-% orderPlot = {[8:13]};                                                    % jintang
-% run('titleNames_jintang.m')
+orderPlot = {[8:13]};                                                    % jintang
+run('titleNames_jintang.m')
 
 %% computation
 formatIn = 'yyyy-mm-dd';
@@ -172,34 +174,35 @@ for f = cell2mat(orderPlot)
     fprintf(sprintf('\nPlotting figure %d...\n', f))
     figure(f)
     
-%     plot(maxAll(:,f), 'r', 'LineWidth', 1);
-%     hold on
-%     plot(rmsAll(:,f), 'b', 'LineWidth', 1);
-%     hold on
-%     plot(minAll(:,f), 'g', 'LineWidth', 1);
-%     hold off
-%     legend('MAX', 'RMS', 'MIN', 'Location', 'bestoutside')
-%     % axis control
-%     ax = gca;
-%     ax.XTick = xTickDispl;
-%     ax.XTickLabel = xLabel;
-%     ax.XTickLabelRotation = 23;  % rotation
-%     ax.YLabel.String = 'Displ. (mm)';                                      
-%     ax.Title.String = [sprintf('%s: ', nickName) titles{f}];
-%     ax.Units = 'normalized';
-%     ax.Position = [0.05 0.19 0.9 0.72];  % control ax's position in figure
-%     set(gca, 'fontsize', 20);
-%     set(gca, 'fontname', 'Times New Roman', 'fontweight', 'bold');
-%     xlim([1  size(rmsAll, 1)]);
-%     grid on
-%     % size control
-%     fig = gcf;
-%     fig.Units = 'pixels';
-%     fig.Position = [20 550 2500 440];  % control figure's position
-%     fig.Color = 'w';
+    plot(maxAll(:,f), 'r', 'LineWidth', 1);
+    hold on
+    plot(rmsAll(:,f), 'b', 'LineWidth', 1);
+    hold on
+    plot(minAll(:,f), 'g', 'LineWidth', 1);
+    hold off
+    legend('MAX', 'RMS', 'MIN', 'Location', 'bestoutside')
+    % axis control
+    ax = gca;
+    ax.XTick = xTickDispl;
+    ax.XTickLabel = xLabel;
+    ax.XTickLabelRotation = 23;  % rotation
+    ax.YLabel.String = 'Displ. (mm)';                                      
+    ax.Title.String = [sprintf('%s: ', nickName) titles{f}];
+    ax.Units = 'normalized';
+    ax.Position = [0.05 0.19 0.9 0.72];  % control ax's position in figure
+    set(gca, 'fontsize', 20);
+    set(gca, 'fontname', 'Times New Roman', 'fontweight', 'bold');
+    xlim([1  size(rmsAll, 1)]);
+    grid on
+    % size control
+    fig = gcf;
+    fig.Units = 'pixels';
+    fig.Position = [20 550 2500 440];  % control figure's position
+    fig.Color = 'w';
     
     % save
     saveas(gcf, sprintf('%s/stats_%s_chan_%d_basic.tif', dir.figFolderBasic, nickName, f));
+    saveas(gcf, sprintf('%s/stats_%s_chan_%d_basic.fig', dir.figFolderBasic, nickName, f));
     fprintf('\nstats %s channel %d saved.\n', nickName, f);
 %     close
 end
@@ -260,6 +263,7 @@ end
 %     
 %     % save
 %     saveas(gcf, sprintf('%s/stats_%s_chan_%d_freq.tif', dir.figFolderFreq, nickName, f));
+%     saveas(gcf, sprintf('%s/stats_%s_chan_%d_freq.fig', dir.figFolderFreq, nickName, f));
 %     fprintf('\nfreq %s channel %d saved.\n', nickName, f);
 %     close
 % end
