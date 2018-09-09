@@ -1,7 +1,7 @@
 clear;clc;close all
 
 %% settings
-% jiashao
+% % jiashao
 % dir.folderSource = 'H:/jiashao/jiashao_2014/netmanagervib/';
 % dir.saveRoot = 'D:/continuous_monitoring/analysis/jiashao/';
 % dir.figSave = dir.saveRoot;
@@ -9,13 +9,13 @@ clear;clc;close all
 % dateEndInput = '2014-12-31';
 % dimens = [180000 55]; % [number of points , number of channels]
 
-% hangzhouwan BHD
-dir.folderSource = 'F:/hangzhouwan/hangzhouwan_2014-2016_mat/BHD/';
-dir.saveRoot = 'D:/continuous_monitoring/analysis/hangzhouwan_beihangdao/';
-dir.figSave = dir.saveRoot;
-dateStartInput = '2014-01-03';
-dateEndInput = '2014-01-03';
-dimens = [180000 55]; % [number of points , number of channels]
+% % hangzhouwan BHD
+% dir.folderSource = 'F:/hangzhouwan/hangzhouwan_2014-2016_mat/BHD/';
+% dir.saveRoot = 'D:/continuous_monitoring/analysis/hangzhouwan_beihangdao/';
+% dir.figSave = dir.saveRoot;
+% dateStartInput = '2014-01-03';
+% dateEndInput = '2014-01-03';
+% dimens = [180000 55]; % [number of points , number of channels]
 
 % % hangzhouwan NHD
 % dir.folderSource = 'F:/hangzhouwan/hangzhouwan_2014-2016_mat/NHD/';
@@ -33,13 +33,14 @@ dimens = [180000 55]; % [number of points , number of channels]
 % dateEndInput = '2013-01-03';
 % dimens = [90000 99]; % [number of points , number of channels]
 
-% % jintang
-% dir.folderSource = 'F:/zhoushan_2013-2016_mat_continuous/';
+% jintang
+dir.folderSource = 'F:/zhoushan_2013-2016_mat/';
 % dir.saveRoot = 'D:/continuous_monitoring/analysis/jintang/';
-% dir.figSave = dir.saveRoot;
-% dateStartInput = '2013-01-01';
-% dateEndInput = '2016-12-31';
-% dimens = [90000 99]; % [number of points , number of channels]
+dir.saveRoot = 'C:/Users/Owner/Google Drive/research/17-2 aut-phd-year2-1/smm_paper/my_images';
+dir.figSave = dir.saveRoot;
+dateStartInput = '2014-04-01';
+dateEndInput = '2014-04-01';
+dimens = [90000 99]; % [number of points , number of channels]
 
 %%
 nickName = 'VIB';
@@ -48,8 +49,8 @@ nBlocks = 6; % number of blocks for hour-data
 % orderPlot = {[3:11 16:21 28:36] [45:49] [50:55] [1:2 12:15 22:27 37:44]};  % jiashao
 % run('titleNames_jiashao.m')     
 
-orderPlot = {[10:14 26:35 1:9 36 48:55], [15:22 37:44], [45:47 23:25]};  % hangzhouwan BHD
-run('titleNames_hangzhouwan_BHD.m')                                              
+% orderPlot = {[10:14 26:35 1:9 36 48:55], [15:22 37:44], [45:47 23:25]};  % hangzhouwan BHD
+% run('titleNames_hangzhouwan_BHD.m')                                              
 
 % orderPlot = {[1:7 19:28] [8:15] [16:18 29:31]};                          % hangzhouwan NHD
 % run('titleNames_hangzhouwan_NHD.m')
@@ -57,8 +58,8 @@ run('titleNames_hangzhouwan_BHD.m')
 % orderPlot = {[1:30] [31:50]};                                              % xihoumen
 % run('titleNames_xihoumen.m')
 
-% orderPlot = {[71:99]};                                                   % jintang
-% run('titleNames_jintang.m')
+orderPlot = {[71:99]};                                                   % jintang
+run('titleNames_jintang.m')
 
 %% computation
 formatIn = 'yyyy-mm-dd';
@@ -126,9 +127,9 @@ for d = dateStart : dateEnd
             dateVecTemp(1, 5) = minute;
             for sec = 0 : 59
                 dateVecTemp(1, 6) = sec;
-                if mod(dateVecTemp(1, 5), 10) == 0 && dateVecTemp(1, 6) == 0
+                if mod(dateVecTemp(1, 4), 3) == 0 && dateVecTemp(1, 5) == 0 && dateVecTemp(1, 6) == 0 % mod(dateVecTemp(1, 5), 10) == 0 && dateVecTemp(1, 6) == 0
                     xTickDispl = cat(2, xTickDispl, countPoint);
-                    xLabel{countLable} = datestr(dateVecTemp, 'mm-dd HH:MM:SS');
+                    xLabel{countLable} = datestr(dateVecTemp, 'HH:MM'); % 'mm-dd HH:MM:SS'
                     countLable = countLable + 1;
             %     elseif dateVecTemp(1, 3) == 1
             %         xTickDispl = cat(2, xTickDispl, d-dateStart+1);
@@ -144,7 +145,7 @@ end
 countLable = countLable - 1;
 countPoint = countPoint - 1;
 % match with the point number of rmsAll
-xTickDispl = (xTickDispl - 1) * 25 + 1;                                    % change here                        
+xTickDispl = (xTickDispl - 1) * 50 + 1;                                    % change here                        
 
 %% plot basic stats -- plot and save figures
 dir.figFolderBasic = sprintf('%s/stats_%s_%s_basic/', dir.figSave, nickName, dateSave);
@@ -162,11 +163,11 @@ for f = cell2mat(orderPlot)
     ax = gca;
     ax.XTick = xTickDispl;
     ax.XTickLabel = xLabel;
-    ax.XTickLabelRotation = 20;  % rotation
-    ax.YLabel.String = 'Accel. RMS (gal)';
-    ax.Title.String = [sprintf('%s: ', nickName) titles{f}];
+    ax.XTickLabelRotation = 0;  % rotation
+    ax.YLabel.String = 'Accel. (gal)';
+    ax.Title.String = [sprintf('JT-') titles{f}]; % sprintf('%s: ', nickName)
     ax.Units = 'normalized';
-    ax.Position = [0.16 0.13 0.82 0.82];  % control ax's position in figure
+    ax.Position = [0.13 0.1 0.82 0.82];  % control ax's position in figure
     set(gca, 'fontsize', 20);
     set(gca, 'fontname', 'Times New Roman', 'fontweight', 'bold');
     xlim([1  size(rawAll, 1)]);
@@ -174,12 +175,12 @@ for f = cell2mat(orderPlot)
     % size control
     fig = gcf;
     fig.Units = 'pixels';
-    fig.Position = [20 50 1000 800];  % control figure's position
+    fig.Position = [20 50 800 450];  % control figure's position
     fig.Color = 'w';
     
     % save
-%     saveas(gcf, sprintf('%s/stats_%s_chan_%d_basic.tif', dir.figFolderBasic, nickName, f));
-%     fprintf('\nstats %s channel %d saved.\n', nickName, f);
+    saveas(gcf, sprintf('%s/raw_%s_chan_%d_basic.tif', dir.figFolderBasic, nickName, f));
+    fprintf('\nraw %s channel %d saved.\n', nickName, f);
 %     close
 end
 
